@@ -35,14 +35,14 @@ def init_logger(name, verbose, logfile=None):
     :param logfile: Path of the logfile
     :return: logging.logger object fully initialized
     """
-    level_mapper = dict()
+    level_mapper = {}
     level_mapper = {0: logging.CRITICAL, 1: logging.INFO, 2: logging.DEBUG}
-    console = True if verbose > 0 else False
+    console = verbose > 0
     logger = logging.getLogger(name)
     # logger.setLevel(logging.DEBUG)
     logger.setLevel(level_mapper[verbose])
     f = logging.Formatter("%(asctime)s | %(name)s | [%(levelname)s] - %(message)s")
-    if console is True:
+    if console:
         ch = logging.StreamHandler()
         ch.setLevel(logging.DEBUG)
         ch.setFormatter(f)
@@ -53,7 +53,7 @@ def init_logger(name, verbose, logfile=None):
         fh.setLevel(logging.INFO)
         fh.setFormatter(f)
         logger.addHandler(fh)
-        logger.info("Logger writing to %s log file" % logfile)
+        logger.info(f"Logger writing to {logfile} log file")
     logger.info("Succesfully initialized logger")
     return logger
 
@@ -167,16 +167,16 @@ def write_results(data, output_file, log):
     try:
         f = open(output_file, "w")
     except FileNotFoundError as e:
-        log.error("Error opening output file {} ({})".format(output_file, e))
+        log.error(f"Error opening output file {output_file} ({e})")
         sys.exit(1)
     except PermissionError as e:
-        log.error("{}".format(e))
+        log.error(f"{e}")
         sys.exit(1)
 
     json.dump(data, f, indent=4)
     f.write("\n")
     f.close()
-    log.info("Data written in {}".format(output_file))
+    log.info(f"Data written in {output_file}")
 
 
 def main():
